@@ -1,0 +1,93 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block title %} Проверить голосование {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4 style="color: gray">Проверка, прошло ли голосование по закону</h4>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <p>Всего для проверки: {{ rules_count }}</p>
+    <p>Сегодня проверено: {{ checks_per_day }}</p>
+    <p>Законов для заполнения таблицы FinalTable: {{ rules_voted_not_populated_count }}</p>
+
+    {% for rule in rules %}
+        <p>
+            <button id="check-rule-voted" rule-number="{{ rule.rule_number }}" style="background-color: #5fd414">Проголосовали</button>
+            <a class="rule-link" href="http://127.0.0.1:8000/admin/forseti/rules/{{ rule.rule_idd }}/change/" target="_blank">{{ rule.rule_number }}</a>
+            <span>{{ rule.last_check }}</span>
+            <button id="check-rule-extend" rule-number="{{ rule.rule_number }}">Продлить на 10 дней</button>
+            <button id="check-rule-extend-20" rule-number="{{ rule.rule_number }}">Продлить на 20 дней</button>
+            <button id="check-rule-extend-60" rule-number="{{ rule.rule_number }}">Продлить на 60 дней</button>
+        </p>
+        <p id="last-hr">__________________</p>
+    {% endfor %}
+</div>
+
+<script>
+    $('.rule-link').click(function (){
+        $(this).css({'color': 'green'})
+    })
+    $('#check-rule-voted').click(function (){
+        let rule_number = $(this).attr('rule-number');
+        $.ajax({
+            type: "GET",
+            url: "/delete_check_date",
+            data: {
+                rule_number: rule_number,
+            },
+            success: function (data){
+                {#alert('Ого!')#}
+            }
+        });
+        $(this).css({'background-color': 'yellow'})
+    })
+
+    $('#check-rule-extend').click(function (){
+        let rule_number = $(this).attr('rule-number')
+        $.ajax({
+            type: "GET",
+            url: "/extend_check_date",
+            data: {
+                rule_number: rule_number,
+            },
+            success: function (data){
+
+            }
+        });
+        $(this).css({'background-color': 'yellow'})
+    })
+
+    $('#check-rule-extend-20').click(function (){
+        let rule_number = $(this).attr('rule-number')
+        $.ajax({
+            type: "GET",
+            url: "/extend_check_date_20",
+            data: {
+                rule_number: rule_number,
+            },
+            success: function (data){
+
+            }
+        });
+        $(this).css({'background-color': 'yellow'})
+    })
+
+     $('#check-rule-extend-60').click(function (){
+        let rule_number = $(this).attr('rule-number')
+        $.ajax({
+            type: "GET",
+            url: "/extend_check_date_60",
+            data: {
+                rule_number: rule_number,
+            },
+            success: function (data){
+
+            }
+        });
+        $(this).css({'background-color': 'yellow'})
+    })
+</script>
+
+{% endblock %}
+

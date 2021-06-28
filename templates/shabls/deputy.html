@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ deputy.name }}{% endblock title %}
+
+{% block content %}                     
+
+<div class="container">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <div class="row">
+        <div class="col">
+            <h4>{{ deputy.name }}, {{ deputy.birth }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <img src="{{ deputy.image.url }}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5>{{ deputy.party_fraction }}, {{ deputy.mandat_basis }} {{ deputy.electoral_district }}</h5>
+            <h6>{{ deputy.region }}</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="accordion" id="accordionConcurrence">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="headingConcurrence">
+                    <button id="button-concurrence" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConcurrence" aria-expanded="true" aria-controls="collapseConcurrence">
+                        Совпадение с мнением народа {{ concurrence_ratio }}% ({{ concurrences_count }} законов.
+                        Из них За - {{ concurrences_yes }}, Против - {{ concurrences_no }}).
+                    </button>
+                </h1>
+                <div id="collapseConcurrence" class="accordion-collapse collapse" aria-labelledby="headingConcurrence" data-bs-parent="#accordionConcurrence">
+                    <div class="accordion-body" id="deputy-list-concurrence">
+                        {% for rule in concurrences %}
+                            <p class="position-relative"><a href="/rule/{{ rule.rule_number }}" target="_blank" class="stretched-link" style="text-decoration: none; color: black">{{ rule.rule_number }} {{ rule.title }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Прогул {{ d_not_vote }} голосований</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="accordion" id="accordionExplane">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="headingExplane">
+                    <button id="button-author" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExplane" aria-expanded="true" aria-controls="collapseExplane">
+                        Инициатор {{ rules_count }} законопроектов
+                    </button>
+                </h1>
+                <div id="collapseExplane" class="accordion-collapse collapse" aria-labelledby="headingExplane" data-bs-parent="#accordionExplane">
+                    <div class="accordion-body" id="deputy-rules-list">
+                        {% for rule in rules %}
+                            <p class="position-relative"><a href="/rule/{{ rule.rule_number }}" target="_blank" class="stretched-link" style="text-decoration: none; color: black">{{ rule.rule_number }} {{ rule.title }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{#//////////////////////////////////////////////// ОТПРАВИТЬ ПОРУЧЕНИЕ//////////////////////////////////////////////  #}
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col">
+            <h4>Направить поручение</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form action="{% url 'add_task' %}" method="post">
+                {% csrf_token %}
+                <textarea id="task-textarea" name="task_text"></textarea>
+                <input type="hidden" name="task_author" value="{{ user.username }}">
+                <input type="hidden" name="deputy_name" value="{{ deputy.name }}">
+                <br>
+                <button type="submit" class="btn btn-success">Отправить</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+{#//////////////////////////////           АККОРДЕОН ПОРУЧЕНИЙ        /////////////////////////////////////////////#}
+    {% if tasks %}   {# Проверка, есть ли поручения #}
+    <div class="row">           {# Поручения #}
+        <div class="accordion" id="accordionTasks">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTasks">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTasks" aria-expanded="true" aria-controls="collapseTasks">
+                        Поручения
+                    </button>
+                </h2>
+                <div id="collapseTasks" class="accordion-collapse collapse" aria-labelledby="headingTasks" data-bs-parent="#accordionTasks">
+                    <div id="tasks" class="accordion-body">
+                        {% for task in tasks %}
+                            <span class="text-bold">{{ task.task_author }} </span><span class="text-italic">от {{ task.task_date }}</span>
+                            <img src="{% static '/image/like.png' %}"
+                                 class="tasks-img {% if task.id in id_list %}task-agree{% else %}task-default{% endif %}"
+                                 username="{{ user.username }}"
+                                 agree="{% if task.id in id_list %}yes{% else %}no{% endif %}"
+                                 task-id="{{ task.id }}"
+                                 deputy-name="{{ deputy.name }}">
+                            <span class="span-task-rating">{{ task.task_rating }}</span>
+                            <span class="span-task-id"> (id - {{ task.id }})</span>
+                            <p class="text-comment">{{ task.task_text }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+        $('#button-author').click(function (){
+            $('#deputy-rules-list p:even').css({"backgroundColor": "#e7e2e2"});
+        })
+        $('#button-concurrence').click(function (){
+            $('#deputy-list-concurrence p:even').css({"backgroundColor": "#e7e2e2"});
+        })
+    </script>
+    <script src="{% static 'js/task_agree.js' %}"></script>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Регионы РФ{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <select id="select-region">
+        {% for region in regions %}
+            <option id="{{ region.name }}">{{ region.name }}</option>
+        {% endfor %}
+    </select>
+    <div id="search-result"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="{% static 'js/deputy_search.js' %}"></script>
+</div>
+{% endblock content %}
+

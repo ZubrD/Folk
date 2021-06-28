@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная{% endblock title %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+
+<div class="container">
+{#    <div class="row">#}
+{#        <img src="{% static 'image/duma2.jpg' %}">#}
+{#    </div>#}
+    <div class="row">               {% comment %}Форма поиска закона{% endcomment %}
+        <div id="div-search-rule" class="col-4 offset-8 border-none">
+            <form id="search_rule_form" method="post" >     {% comment %}action="{% url 'search_rule' %}"{% endcomment %}
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Поиск закона" id="search-input" name="searched" value="">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="div-search-result" class="row justify-content-end">
+        <div class="col-xs-6 col-sm-8 col-md-8 col-lg-8 offset-lg-2" id="search-result"></div>
+    </div>
+    <script src="{% static 'js/instant_search_rule.js' %}"></script>  {# Моментальный вывод результатов поиска #}
+
+    <div class="row">
+        <div id="top-title" class="col">
+            <p>Монитор</p>
+        </div>
+    </div>
+
+    <div class="row dropdown">
+      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+        Новые законопроекты
+      </a>
+
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <li><a id="drop1" class="dropdown-item" href="#">Новые законопроекты</a></li>
+        <li><a id="drop2" class="dropdown-item" href="#">Недавно проголосовали</a></li>
+        <li><a id="drop3" class="dropdown-item" href="#">Поручения депутатам</a></li>
+        <li><a id="drop4" class="dropdown-item" href="#">Ответы депутатов</a></li>
+        <li><a id="drop5" class="dropdown-item" href="#">Самые популярные законы</a></li>
+        <li><a id="drop6" class="dropdown-item" href="#">Самые полезные законы</a></li>
+        <li><a id="drop7" class="dropdown-item" href="#">Самые ненужные законы</a></li>
+      </ul>
+    </div>
+
+    <script src="{% static 'js/index_top_dropdown.js' %}"></script>
+
+    <div class="row">
+        <div id="drop1-new-rule" class="card col">
+            <div class="card-body">
+                <h6 class="card-title">Новые законопроекты (с {{ endregdate }} по {{ startregdate }}) - {{ registered_rules.count }}</h6>
+                <div class="card-my-scroll">
+                    <table class="rules-in-table-index">
+                        {% for reg_rule in registered_rules %}
+                        <tr>
+                            <td class="card-text" width="20%">{{ reg_rule.initialization_date }}</td>
+                            <td class="card-text" width="80%"><p class="position-relative"><a href="rule/{{ reg_rule.rule_number }}" target="_blank" class="stretched-link" style="text-decoration: none; color: black">{{ reg_rule.title }}</a></p></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="drop2-new-voted" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Недавно проголосовали (с {{ endvotdate }} по {{ startvotdate }}) - {{ voted_rules.count }}</h6>
+                <div class="card-my-scroll">
+                    <table class="rules-in-table-index">
+                        {% for vot_rule in voted_rules %}
+                        <tr>
+                            <td class="card-text" width="20%">{{ vot_rule.voting_date }}</td>
+                            <td class="card-text" width="80%"><p class="position-relative"><a href="rule/{{ vot_rule.rule_number }}" target="_blank" class="stretched-link" style="text-decoration: none; color: black">{{ vot_rule.title }}</a></p></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="drop3-deputy-task" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Поручения депутатам</h6>
+                <div class="card-my-scroll">
+
+                </div>
+            </div>
+        </div>
+        <div id="drop4-deputy-answer" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Ответы депутатов</h6>
+                <div class="card-my-scroll">
+
+                </div>
+            </div>
+        </div>
+        <div id="drop5-popular" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Самые популярные законы</h6>
+                <div class="card-my-scroll">
+
+                </div>
+            </div>
+        </div>
+        <div id="drop6-useful" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Самые полезные законы</h6>
+                <div class="card-my-scroll">
+
+                </div>
+            </div>
+        </div>
+        <div id="drop7-needless" class="card col" hidden>
+            <div class="card-body">
+                <h6 class="card-title">Самые ненужные законы</h6>
+                <div class="card-my-scroll">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col col-title">
+            <p class="p-title">Голосование по закону {{ rule.rule_number }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <p id="p-random-rule" class="position-relative"><a href="rule/{{ rule.rule_number}}" class="stretched-link" target="_blank" style="text-decoration: none; color: black">{{ rule.title }}</a></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-5">
+            <p class="p-title">
+                Депутаты: <span style="color: {{ v_result_voting_color }}">{{ v_result_voting }}</span>
+            </p>
+        </div>
+        <div class="col-2">
+            <p class="p-title">vs</p>
+        </div>
+        <div class="col-5">
+            <p class="p-title">
+                Народ: <span style="color: {{ p_result_voting_color }}">{{ p_result_voting }}</span>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-3 col-simple">
+            {% comment %}Диаграмма ДЕПУТАТСКОГО голосования{% endcomment %}
+            <span id="for-deputy-chart" vyes="{{ v_yes }}" vno="{{ v_no }}" vabstained="{{ v_abstained }}" vnotvote="{{ v_not_vote }}"></span>
+            <canvas id="DeputyChart" width="6" height="6"></canvas>
+            <script src="{% static 'js/deputy_chart_index.js' %}"></script>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-lg-3">
+            <table>                     {% comment %}Таблица результатов ДЕПУТАТСКОГО голосования{% endcomment %}
+                <tr>
+                    <td><div class="squ-yes"></div></td>
+                    <td><div id="v-yes" result="{{ v_yes }}">За: {{ v_yes }} голосов, {{ v_yes_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-no"></div></td>
+                    <td><div id="v-no" result="{{ v_no }}">Против: {{ v_no }} голосов, {{ v_no_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-abs"></div></td>
+                    <td><div id="v-abstained" result="{{ v_abstained }}">Воздержались: {{ v_abstained }} голосов, {{ v_abstained_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-not-v"></div></td>
+                    <td><div id="v-not-vote" result="{{ v_not_vote }}">Не голосовали: {{ v_not_vote }} голосов, {{ v_not_vote_pr }}%</div></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-lg-3 col-simple">
+            {% comment %}Диаграмма НАРОДНОГО голосования{% endcomment %}
+            <span id="for-populi-chart" pyes="{{ p_yes }}" pno="{{ p_no }}" pabstained="{{ p_abstained }}"></span>
+            <canvas id="VoxPopuliChart" width="6" height="6"></canvas>
+            <script src="{% static 'js/vox_populi_chart_index.js' %}"></script>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-lg-3">
+            <table>             {% comment %}Таблица результатов НАРОДНОГО голосования{% endcomment %}
+                <tr>
+                    <td><div class="squ-yes"></div></td>
+                    <td><div id="p-yes" result="{{ p_yes }}">За: {{ p_yes }} голосов, {{ p_yes_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-no"></div></td>
+                    <td><div id="p-no" result="{{ p_no }}">Против: {{ p_no }} голосов, {{ p_no_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-abs"></div></td>
+                    <td><div id="p-abstained" result="{{ p_abstained }}">Воздержался: {{ p_abstained }} голосов, {{ p_abstained_pr }}%</div></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Мнение народа и депутатов совпадает в {{ concurrence_ratio }} % случаев ({{ concurrence_count }} из {{ total_voted_rules }})</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-12 col-title">
+            <p class="p-title">Персональные страницы депутатов</p>
+        </div>
+    </div>
+{#////////////////////////////////        ПОИСК ДЕПУТАТА ИЗ ВЫПАДАЮЩЕГО СПИСКА      //////////////////////////////////#}
+    <div class="row">
+        <div class="col-2 border-none">
+            <button class="btn btn-success" type="button" id="show-regions">Выберите регион</button>
+            <div id="region-list" class="col-3">
+                {% for region in regions %}
+                    <p id="{{ region.name }}" style="cursor: pointer">{{ region.name }}</p>
+                {% endfor %}
+            </div>
+            <div id="search-deputy-result"></div>
+        </div>
+{#///////////////////////////////////////          ПОИСК ДЕПУТАТА ПО ИМЕНИ      //////////////////////////////////////#}
+        <div id="div-search-deputy" class="col-4 border-none">
+            <form id="search_deputy_form" method="post" >
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Поиск депутата по имени" id="search-deputy-input" name="searched_deputy" value="">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" id="div-instant-search-deputy-result">
+        <div class="col-3 offset-2" id="instant-search-deputy-result"></div>
+    </div>
+    <script src="{% static 'js/show_regions.js' %}"></script>
+    <script src="{% static 'js/deputy_search.js' %}"></script>
+    <script src="{% static 'js/instant_search_deputy.js' %}"></script>
+
+</div>
+
+{% endblock content %}

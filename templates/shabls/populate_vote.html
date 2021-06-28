@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заполнение FinalTable{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <p>{{ stroka }}</p>
+        <p>Количество заполненных законов: {{ count_populated_rules }}</p>
+    </div>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Поиск депутатов{% endblock title %}
+
+{% block content %}
+    <div id="search-result"></div>
+    <h2>Список депутатов от региона <i>{{ searched_region }}</i></h2>
+    {% for dep_name in deputy_name %}
+        <ul>
+            <li>{{ dep_name.name }}</li>
+        </ul>
+    {% endfor %}
+{% endblock content %}

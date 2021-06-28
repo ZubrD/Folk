@@ -1,0 +1,295 @@
+
+.col-sm {
+    background-color: pink;
+    height: 100px;
+    border: solid #0f0f0f;
+}
+
+#DeputyChart, #VoxPopuliChart {
+    width: 200px !important;
+    height: 200px !important;
+    margin: auto;
+}
+
+.squ-yes, .squ-no, .squ-abs, .squ-not-v {
+    width: 20px;
+    height: 20px;
+}
+
+.squ-yes {
+    background-color: green;
+}
+
+.squ-no {
+    background-color: red;
+}
+
+.squ-abs {
+    background-color: lightblue;
+}
+
+.squ-not-v {
+    background-color: gray;
+}
+
+#v-yes, #p-yes {
+    color: green;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-no, #p-no {
+    color: red;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-abstained, #p-abstained {
+    color: lightblue;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-not-vote {
+    color: grey;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+/*********************************************************************************************/
+/*****************************************Тренировка с Bootstrap******************************/
+
+
+
+.row > * {
+    border: 1px solid #b3b1b1;
+}
+
+.card-my-scroll {
+    overflow-y: scroll;
+    height: 150px;
+    margin-bottom: 30px;
+}
+
+#top-title {
+    height: 80px;
+    background-color: lightgrey;
+    font-size: 50px;
+    text-align: center;
+}
+
+.col-title {
+    background-color: lightblue;
+    height: 60px;
+}
+
+.col-simple {
+    height: 220px;
+}
+
+.p-title {
+    text-align: center;
+    font-size: 30px;
+}
+
+.card-title {
+    text-align: center;
+}
+
+#search-result, #instant-search-deputy-result {
+    position: absolute;
+    z-index: 900;
+    background-color: #e5dcdc;
+    overflow-y: scroll;
+}
+
+#search-result a, #instant-search-deputy-result a {
+    color: black;
+}
+
+#search-result p, #instant-search-deputy-result p {              /*Список законов на главной*/
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+/**************************************************************************************************/
+/*                                   СПИСОК РЕГИОНОВ ДЛЯ ПОИСКА ДЕПУТАТА                          */
+/**************************************************************************************************/
+
+#region-list {
+    position: absolute;
+    z-index: 1000;
+    background-color: #e5dcdc;
+    display: none;
+    height: 170px;
+    overflow-y: scroll;
+}
+
+#region-list p, #search-deputy-result p {
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+#search-deputy-result {
+    position: absolute;
+    z-index: 500;
+    background-color: #f6f5ee;
+    display: none;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+#search-deputy-result a {
+    color: #3b3a3a;
+}
+
+#search-deputy-result a:hover {
+    color: green;
+}
+
+#div-visits {
+    text-align: right;
+}
+
+/*****************************************************************************************************/
+/*                                          СТРАНИЦА ЗАКОНА                                          */
+/*****************************************************************************************************/
+
+#div-set-likes, #div-set-dislikes, #div-span-likes, #div-span-dislikes {
+    text-align: center;
+}
+
+button {
+    cursor: pointer;
+}
+
+#set-likes, #set-dislikes {
+    width: 200px;
+    height: 70px;
+    margin-top: 30px;
+    font-size: 30px;
+}
+
+.button-liked {
+    background-color: green;
+}
+
+.button-disliked {
+    background-color: red;
+}
+
+.button-not-liked, .button-not-disliked {
+    background-color: lightgray;
+}
+
+.div-title {
+    text-align: center;
+}
+
+#span-likes, #span-dislikes {
+    padding-bottom: 20px;
+    font-size: 40px;
+}
+
+.table-result-voting {
+    margin-top: 40px;
+}
+
+#DeputyChart, #VoxPopuliChart {
+    margin-top: 9px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-comment {
+    margin-left: 10px;
+}
+
+#comment-textarea, #task-textarea {
+    width: 400px;
+}
+
+.rules-in-table-index td {
+    font-size: 12px;
+}
+
+.rules-in-table-index td p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.rules-in-table-index td:first-child{
+    vertical-align: top;
+}
+
+.rules-in-table-index tr:nth-child(odd){
+    background-color: #e3e3e3;
+}
+
+#drop1, #drop2, #drop3, #drop4, #drop5, #drop6, #drop7 {
+    text-align: center;
+}
+
+#p-random-rule {
+    margin-top: 15px;
+}
+
+#div-send-vote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#select-vote-group {
+    margin:50px 0;
+}
+
+#button-send-vote {
+    margin-bottom: 50px;
+    font-size: x-large;
+}
+
+.radio-font {
+    font-size: x-large;
+}
+
+#footer {
+    height: 200px;
+}
+
+#footer p {
+    margin-top: 50px;
+}
+
+#last-hr {
+    margin-bottom: 300px;
+}
+
+.border-none {
+    border: none;
+}
+
+#p-usefulness {
+    text-align: center;
+    font-size: xx-large;
+}
+
+.tasks-img {
+    max-height: 2.5%;
+    max-width: 2.5%;
+    cursor: pointer;
+}
+
+.task-default {
+    opacity: 0.4;
+}
+
+.task-agree {
+    opacity: 1;
+}

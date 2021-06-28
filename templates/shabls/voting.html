@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Голосование{% endblock title %}
+
+{% block content %}
+    {% for votes in how_vote %}
+        <ul>
+            <li>{{ votes.rules }}</li>
+        </ul>
+    {% endfor %}
+{% endblock content %}

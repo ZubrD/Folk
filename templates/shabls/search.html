@@ -1,0 +1,50 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block title %} Поиск {% endblock %}
+
+{% block content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <h1 class="display-3">Поиск</h1>
+
+    <form id="search_rule_form" method="post" action="{% url 'search_rule' %}">
+        {% csrf_token %}
+        Поиск: <input type="text" id="search-input" name="searched" value="" size="50" />
+        <br />
+        <input id="search-submit" type="submit" value="submit" />
+    </form>
+
+    <ul>
+    {% for item in search %}
+        <li>{{ item.title }}</li>
+    {% endfor %}
+    </ul>
+    <div id="search-result">
+
+    </div>
+
+    <script>        {# Моментальный вывод результатов поиска #}
+        $('#search-input').on('keyup', function (){
+            count = $(this).val().length
+            if (count > 4){         {# Минимальное количество знаков в запросе - 5 #}
+                searched = $(this).val()
+                $.ajax({
+                    type: "GET",
+                    url: "/isearch",
+                    data: {
+                        searched_val: searched
+                    },
+                    success: function (data){
+                        $('#search-result').empty()
+                        $.each(data, function (){
+                            $('#search-result').append('<p>'+this.rule_number+' '+this.title+'</p>')
+                        })
+                    }
+                });
+            } else {
+                $('#search-result').empty() {# Если запрос меньше 5 знаков - очищаю div вывода результатов #}
+            }
+        })
+    </script>
+{% endblock %}

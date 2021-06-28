@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Законы{% endblock title %}
+
+{% block content %}
+    {% for rule in rules_list %}
+        <ul>
+            <li>
+                <a href="/rule/{{ rule.rule_number }}" target="_blank">{{ rule.rule_number }}</a><br>
+                <p>{{ rule.title }}.</p>
+                Инициатива:<br>
+                <ul>
+                    <li>{{ rule.author_2 }}</li>
+                </ul>
+                {% for delegs in rule.author.all %}
+                    <ul>
+                        <li>
+                            <a href="/deputy/{{ delegs }}" target="_blank">{{ delegs }}</a>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock content %}

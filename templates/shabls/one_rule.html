@@ -1,0 +1,288 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block title %}
+    Закон {{ rule.rule_number }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <div class="row" >
+        <div class="col offset-9" id="div-visits">
+            Количество просмотров: {{ rule.visits }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h3>{{ rule.rule_number }}</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h4>{{ rule.title }}</h4>
+        </div>
+    </div>
+{# /////////////////////////////     ПОЯСНИТЕЛЬНАЯ ЗАПИСКА         ///////////////////////////////////////////////////#}
+    <div class="row">
+        <div class="accordion" id="accordionExplane">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingExplane">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExplane" aria-expanded="true" aria-controls="collapseExplane">
+                        Пояснительная записка
+                    </button>
+                </h2>
+                <div id="collapseExplane" class="accordion-collapse collapse" aria-labelledby="headingExplane" data-bs-parent="#accordionExplane">
+                    <div class="accordion-body">
+                        {{ rule.description }}
+                        <a href="https://sozd.duma.gov.ru/bill/{{ rule.rule_number }}" target="_blank">Смотреть на сайте ГД</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{#//////////////////////////////       АВТОРЫ ЗАКОНА        //////////////////////////////////////////////////////////#}
+    <div class="row">
+        <div class="col">
+            <h4>Автор (авторы) законопроекта:</h4>
+            {% for author in array_authors %}   {% comment %}сначала проверяю. есть ли слово в массиве имен депутатов{% endcomment %}
+                {% if author in array_deputies %}
+                    {% for deputy in deputies_query %}  {% comment %}если это депутат, то проверяю через queryset депутатов{% endcomment %}
+                        {% if author == deputy.short_name %}
+                            <a href="/deputy/{{ deputy.name }}" target="_blank">{{ author }}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {{ author }}    {% comment %}если это не имя депутата, то вывожу слово в строке{% endcomment %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Заказчик:</h4>
+            <p>{{ rule.consumer }}</p>
+        </div>
+    </div>
+{#///////////////////////                ВАМ ЭТОТ ЗАКОН НУЖЕН? (ДА/НЕТ)        //////////////////////////////////////#}
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col div-title" id="div-title-likes">
+           <h3>Этот закон Вам нужен?</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6" id="div-set-likes">
+            <button id="set-likes" class="button-{{ liked_or_not }}" username="{{ user.username }}"
+                    rule-number="{{ rule.rule_number }}" liked="{{ liked_or_not }}"
+                    {% if disliked_or_not == 'disliked' %} disabled {% endif %}>Да</button>
+        </div>
+        <div class="col-6" id="div-set-dislikes">
+            <button id="set-dislikes" class="button-{{ disliked_or_not }}" username="{{ user.username }}"
+                    rule-number="{{ rule.rule_number }}" disliked="{{ disliked_or_not }}"
+                    {% if liked_or_not == 'liked' %} disabled {% endif %}>Нет</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6" id="div-span-likes">
+            <p id="span-likes">{{ likes_count }}</p>
+        </div>
+        <div class="col-6" id="div-span-dislikes">
+            <p id="span-dislikes">{{ dislikes_count }}</p>
+        </div>
+    </div>
+    {% if usefulness %}
+    <div class="row">
+        <div class="col">
+            <p id="p-usefulness" style="color: {{ usefulness_color }}">Нужность данного закона составляет {{ usefulness }}%</p>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    <script src="{% static 'js/likes_dislikes.js' %}"></script>
+{#//////////////////////////////////////         ОТПРАВИТЬ КОММЕНТАРИЙ        ////////////////////////////////////////#}
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col">
+            <h4>Ваш комментарий</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form action="{% url 'add_comment' rule.id %}" method="post">
+                {% csrf_token %}
+                <textarea id="comment-textarea" name="text"></textarea>
+                <input type="hidden" name="name" value="{{ user.username }}">
+                <br>
+                <button type="submit" class="btn btn-success">Отправить</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+{#//////////////////////////////           АККОРДЕОН КОММЕНТАРИЕВ        /////////////////////////////////////////////#}
+    {% if comments %}   {% comment %}Проверка, есть ли комментарии{% endcomment %}
+    <div class="row">           {% comment %}Комментарии{% endcomment %}
+        <div class="accordion" id="accordionComments">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingComments">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComments" aria-expanded="true" aria-controls="collapseComments">
+                        Комментарии
+                    </button>
+                </h2>
+                <div id="collapseComments" class="accordion-collapse collapse" aria-labelledby="headingComments" data-bs-parent="#accordionComments">
+                    <div id="comments" class="accordion-body">
+                        {% for comment in comments %}
+                            <span class="text-bold">{{ comment.name }} </span><span class="text-italic">от {{ comment.date1 }}</span>
+                            <p class="text-comment">{{ comment.text }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{#/////////////////////////////////////       ГОЛОСОВАНИЯ       //////////////////////////////////////////////////////#}
+    <div class="row">
+        {% if rule.populated %}             {# Если прошло голосование и FinalTable заполнена #}
+        <div class="col div-title">
+            <h3>Голосование</h3>
+        </div>
+    </div>
+    <div class="row" id="one_rule_result_deputy">
+        <div class="col-6 div-title">
+            <h4>
+                Депутаты: <span style="color: {{ v_result_voting_color }}">{{ v_result_voting }}</span>
+            </h4>
+        </div>
+        <div class="col-6 div-title">
+            <h4>
+                Народ: <span style="color: {{ p_result_voting_color }}">{{ p_result_voting }}</span>
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+{#///////////////////////////////////       ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ        ///////////////////////////////////#}
+        <div class="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
+            <span id="for-deputy-chart" vyes="{{ v_yes }}" vno="{{ v_no }}" vabstained="{{ v_abstained }}" vnotvote="{{ v_not_vote }}"></span>
+            <canvas id="DeputyChart" width="6" height="6"></canvas>
+            <script src="{% static 'js/deputy_chart_index.js' %}"></script>
+        </div>
+{#/////////////////////////////////////     ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ      ///////////////////////////#}
+        <div class="col-xs-6 col-sm-6 col-lg-3">
+            <table class="table-result-voting">
+                <tr>
+                    <td><div class="squ-yes"></div></td>
+                    <td><div id="v-yes" result="{{ v_yes }}">За: {{ v_yes }} голосов, {{ v_yes_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-no"></div></td>
+                    <td><div id="v-no" result="{{ v_no }}">Против: {{ v_no }} голосов, {{ v_no_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-abs"></div></td>
+                    <td><div id="v-abstained" result="{{ v_abstained }}">Воздержались: {{ v_abstained }} голосов, {{ v_abstained_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-not-v"></div></td>
+                    <td><div id="v-not-vote" result="{{ v_not_vote }}">Не голосовали: {{ v_not_vote }} голосов, {{ v_not_vote_pr }}%</div></td>
+                </tr>
+            </table>
+        </div>
+        {% endif %}
+{#///////////////////////////////////       ДИАГРАММА НАРОДНОГО ГОЛОСОВАНИЯ        ///////////////////////////////////#}
+        <div class="col">
+        {% if p_total_count %}      {# Если кто-то уже проголосовал по этому закону #}
+            <span id="for-populi-chart" pyes="{{ p_yes }}" pno="{{ p_no }}" pabstained="{{ p_abstained }}"></span>
+            <canvas id="VoxPopuliChart" width="6" height="6"></canvas>
+            <script src="{% static 'js/vox_populi_chart_index.js' %}"></script>
+        {% endif %}
+        </div>
+{#/////////////////////////////////////     ТАБЛИЦА РЕЗУЛЬТАТОВ НАРОДНОГО ГОЛОСОВАНИЯ      ///////////////////////////#}
+        <div class="col">
+        {% if p_total_count %}      {# Если кто-то уже проголосовал по этому закону #}
+            <table class="table-result-voting">             {% comment %}Таблица результатов НАРОДНОГО голосования{% endcomment %}
+                <tr>
+                    <td><div class="squ-yes"></div></td>
+                    <td><div id="p-yes" result="{{ p_yes }}">За: {{ p_yes }} голосов, {{ p_yes_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-no"></div></td>
+                    <td><div id="p-no" result="{{ p_no }}">Против: {{ p_no }} голосов, {{ p_no_pr }}%</div></td>
+                </tr>
+                <tr>
+                    <td><div class="squ-abs"></div></td>
+                    <td><div id="p-abstained" result="{{ p_abstained }}">Воздержался: {{ p_abstained }} голосов, {{ p_abstained_pr }}%</div></td>
+                </tr>
+            </table>
+        {% endif %}
+        </div>
+    </div>
+{#//////////////////////////////////////////        ФОРМА ГОЛОСОВАНИЯ         ///////////////////////////////////////#}
+    {% if rule_voted_or_not %}  {# Проводилось голсование по закону или нет? #}
+    <div class="row">
+        <div class="col div-title">
+            <h3>Ваше мнение по этому документу</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% if not this_user_result_voting %}
+                {% if user.is_authenticated %}
+                    <form id="vote_form" action="{% url 'vox_populi' %}" method = "POST">
+                        {% csrf_token %}
+                        <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group" id="select-vote-group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" value="За">
+                            <label class="btn btn-outline-primary radio-font" for="btnradio1">За</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" value="Против">
+                            <label class="btn btn-outline-primary radio-font" for="btnradio2">Против</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" value="Воздержался">
+                            <label class="btn btn-outline-primary radio-font" for="btnradio3">Воздержался</label>
+                        </div>
+                        <div class="col d-flex justify-content-center" id="div-send-vote">
+                            <input type="hidden" name="person" value="{{ user.username }}">
+                            <input type="hidden" name="rule" value="{{ rule.rule_number }}">
+                            <input type = "submit" value = "Проголосовать" id="button-send-vote" class="btn btn-success" disabled>
+                        </div>
+                    </form>
+                {% else %}
+                    <h1>Чтобы проголосовать, надо <a href="{% url 'login' %}">войти</a> или
+                        <a href="{% url 'register' %}">зарегистрироваться</a>, а потом войти</h1>
+                {% endif %}
+            {% else %}
+                <div style="text-align: center">
+                    По этому закону Вы уже проголосовали
+                    {% for i in this_user_result_voting %}
+                        ({{ i.result }})
+                    {% endfor %}
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button id="delete-voting" name="{{ user.username }}" rule-number="{{ rule.rule_number }}">Отменить голосование?</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+        {% if rule.rejection %}
+            <div class="row">
+                <div class="col div-title">
+                    <h3>Данный закон отклонён</h3>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col div-title">
+                    <h3>По этому закону ещё не проводилось голосование</h3>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <script src="{% static 'js/populi_voting.js' %}"></script>
+</div>
+{% endblock %}

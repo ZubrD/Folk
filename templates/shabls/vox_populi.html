@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% endblock title %}
+
+{% block content %}
+
+    <form action="{% url 'vox_populi' %}" method = "POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="hidden" name="person" value="{{ user.username }}">
+        <input type = "submit" value = "Проголосовать">
+    </form>
+
+{% endblock content %}

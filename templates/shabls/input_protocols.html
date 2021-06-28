@@ -1,0 +1,16 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block title %} Проверить голосование {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4 style="color: gray">Учёт протоколов, испрапвление срока проверки закона</h4>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <form action="{% url 'protocols' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="controlled">
+        <input type="submit">
+    </form>
+</div>
+{% endblock %}
