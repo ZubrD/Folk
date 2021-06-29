@@ -16,17 +16,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(t9n#=65iba)4)2n^d9pc&24rfh3o@7goek+&^q@o88jvk=1hw'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -76,18 +65,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Folk.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'forseti_db',
-        'USER': 'forseti_admin',
-        'PASSWORD': 'forseti_12345'
-    }
-}
 
 
 # Password validation
@@ -127,8 +104,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [STATIC_DIR]
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -147,3 +123,9 @@ DATE_INPUT_FORMATS = ('%d %b %Y', '%d %b, %Y',)
 # Пользователи страницы перенаправляются, если они не вошли в систему
 # и пытаются получить доступ к страницам, требующим аутентификации
 LOGIN_URL = '/login/'
+
+
+try:
+    from .local_settings import *
+except ImportError:
+    from .prod_setings import *
