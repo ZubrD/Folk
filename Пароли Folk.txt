@@ -1,8 +1,0 @@
-admin: 12345
-
-Для PostgreSQL:
-	postgres: 12345
-	Пользователь postgres также является суперпользователем.
-	
-	database: forseti_db
-	forseti_admin: forseti_12345
