@@ -128,4 +128,4 @@ LOGIN_URL = '/login/'
 try:
     from .local_settings import *
 except ImportError:
-    from .prod_setings import *
+    from .prod_settings import *

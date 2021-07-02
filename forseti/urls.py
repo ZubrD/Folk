@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # path('', views.get_empty, name='get_empty'),
     path('', views.get_index, name='get_index'),
     # path('rules/', views.RulesView.as_view(), name='rules'),
     path('rule/<str:rule_123>/', views.get_rule, name='rule'),

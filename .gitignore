@@ -1,3 +1,5 @@
 /Folk/prod_settings.py
+/config/folk.conf
+/config/gunicorn.conf.py
 /Пароли Folk.txt
 /Деплоймент.docx
