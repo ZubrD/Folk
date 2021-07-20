@@ -35,7 +35,7 @@
 
     <div class="row dropdown">
       <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-        Новые законопроекты
+        Поручения депутатам
       </a>
 
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -52,7 +52,7 @@
     <script src="{% static 'js/index_top_dropdown.js' %}"></script>
 
     <div class="row">
-        <div id="drop1-new-rule" class="card col">
+        <div id="drop1-new-rule" class="card col" hidden>
             <div class="card-body">
                 <h6 class="card-title">Новые законопроекты (с {{ endregdate }} по {{ startregdate }}) - {{ registered_rules.count }}</h6>
                 <div class="card-my-scroll">
@@ -82,11 +82,24 @@
                 </div>
             </div>
         </div>
-        <div id="drop3-deputy-task" class="card col" hidden>
+        <div id="drop3-deputy-task" class="card col">
             <div class="card-body">
-                <h6 class="card-title">Поручения депутатам</h6>
+                <table>
+                    <td class="card-text" width="30%"><h6>Адресат</h6></td>
+                    <td class="card-text" width="70%"><h6>Текст поручения</h6></td>
+                    <td class="card-text" width="70%"><h6>Рейтинг</h6></td>
+                </table>
                 <div class="card-my-scroll">
+                    <table class="rules-in-table-index">
+                        {% for task in tasks %}
+                        <tr>
+                            <td class="card-text" width="30%"><p class="position-relative"><a href="deputy/{{ task.deputy_name }}" target="_blank" class="stretched-link" style="text-decoration: none; color: black">{{ task.deputy_name }}</a></p></td>
+                            <td class="card-text" width="70%">{{ task.task_text }}</td>
+                            <td class="card-text" width="70%">{{ task.task_rating }}</td>
+                        </tr>
+                        {% endfor %}
 
+                    </table>
                 </div>
             </div>
         </div>

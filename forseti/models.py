@@ -254,3 +254,16 @@ class TasksRating(models.Model):
         verbose_name_plural = 'Рейтинг поручений'
 
 #######################################################################################################################
+#                                               ОТЗЫВЫ И ПОЖЕЛАНИЯ
+#######################################################################################################################
+
+
+class Suggestions(models.Model):
+    suggestion_text = models.CharField('Текст', max_length=1000, default='')
+    suggestion_date = models.DateTimeField('Дата', auto_now=True)
+    suggestion_published = models.BooleanField('Опубликовано', default=False)
+    suggestion_proved = models.BooleanField('Проверено', default=False)
+    suggestion_author = models.CharField('Автор', max_length=100, default='')
+
+    class Meta:
+        verbose_name = 'Отзывы и пожелания'

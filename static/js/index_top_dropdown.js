@@ -1,7 +1,7 @@
 
 $('#drop1').click(function (){
     $('#dropdownMenuLink').text('Новые законопроекты')
-    $('#drop1-new-rule').show()
+    $('#drop1-new-rule').removeAttr('hidden').show()
     $('#drop2-new-voted').hide()
     $('#drop3-deputy-task').hide()
     $('#drop4-deputy-answer').hide()

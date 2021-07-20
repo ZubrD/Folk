@@ -39,6 +39,7 @@
                         </li>
                     {% endif %}
                         </li>
+                    {% if user.is_superuser %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Служебные
@@ -57,6 +58,7 @@
 
                             </ul>
                         </li>
+                    {% endif %}
                     </ul>
                 </div>
             </div>
@@ -71,6 +73,14 @@
         <div class="container">
             <div class="row" id="footer">
                 <div class="col">
+                    <h6 id="suggestion-title">Отзывы о работе сайта, его дизайне и т.д. </h6>
+                    <form action="{% url 'add_suggestion' %}" method="post">
+                        {% csrf_token %}
+                        <textarea id="suggestion-textarea" name="suggestion_text"></textarea>
+                        <input type="hidden" name="suggestion_author" value="{{ user.username }}">
+                        <br>
+                        <button type="submit" class="btn btn-success">Отправить</button>
+                    </form>
                     <p>Дополнительная информация: партнёры, поддержка, ресурсы и т.д</p>
                 </div>
             </div>

@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import PartyFraction, MandatBasis, Deputy, FederalRegion, Rules, Prefer, NotPrefer, \
-    Comments, FinalTable, VoxPopuli, CheckRulesForVoting, HowManyRulesChecked, TaskForDeputy, TasksRating
+    Comments, FinalTable, VoxPopuli, CheckRulesForVoting, HowManyRulesChecked, TaskForDeputy, TasksRating, \
+    Suggestions
 
 
 @admin.register(FederalRegion)
@@ -50,7 +51,7 @@ class RulesAdmin(admin.ModelAdmin):
               'voted', 'populated', 'rule_tags', 'populi_voted',
               )
     list_display_links = ('title', )
-    list_filter = ('voted',)
+    list_filter = ('voted', 'rejection')
     search_fields = ('rule_number',)
     list_per_page = 500
 
@@ -143,3 +144,12 @@ class TaskForDeputyAdmin(admin.ModelAdmin):
 @admin.register(TasksRating)
 class TasksRatingAdmin(admin.ModelAdmin):
     list_display = ('task_id', 'name')
+
+#######################################################################################################################
+#                                                  ОТЗЫВЫ И ПОЖЕЛАНИЯ
+#######################################################################################################################
+
+@admin.register(Suggestions)
+class SuggestionsAdmin(admin.ModelAdmin):
+    list_display = ('suggestion_text', 'suggestion_author', 'suggestion_date', 'suggestion_proved',
+                    'suggestion_published')

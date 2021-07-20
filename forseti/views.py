@@ -19,7 +19,7 @@ import random
 
 from .forms import UserForm, CommentForm
 from .models import Deputy, FederalRegion, Rules, Prefer, NotPrefer, Comments, FinalTable, \
-    VoxPopuli, CheckRulesForVoting, HowManyRulesChecked, TaskForDeputy, TasksRating
+    VoxPopuli, CheckRulesForVoting, HowManyRulesChecked, TaskForDeputy, TasksRating, Suggestions
 
 # from .models import Post, Like
 from .serializers import DeputySerializer, RuleSerializer, DeputyInstantSearchSerializer
@@ -33,6 +33,7 @@ from .serializers import DeputySerializer, RuleSerializer, DeputyInstantSearchSe
 def get_index(request):
     items = Rules.objects.filter(populated=True, voted=True, populi_voted=True)    # случайный выбор закона,
     rule = random.choice(items)                 # за который проголосовал и народ, и депутаты
+    tasks = TaskForDeputy.objects.all().order_by('-task_rating')
     startregdate = Rules.objects.order_by('initialization_date').last().initialization_date
     endregdate = startregdate - timedelta(days=6)
     registered_rules = Rules.objects.filter(initialization_date__range=[endregdate, startregdate], rejection=False).order_by('-initialization_date')
@@ -120,6 +121,7 @@ def get_index(request):
                'total_voted_rules': count_rules,
                'concurrence_count': concurrence_count,
                'concurrence_ratio': concurrence_ratio,
+               'tasks': tasks
                }
     return render(request, 'shabls/index.html', context)
 
@@ -215,6 +217,7 @@ def get_rule(request, rule_123):
         p_result_voting_color = 'red'
     this_user_result_voting = VoxPopuli.objects.filter(rule_number=rule.rule_number, name=current_user)
     rule_voted_or_not = FinalTable.objects.filter(rule_number_final=rule)
+    work_duration = rule.voting_date - rule.initialization_date
 
     context = {'rule': rule,
                'array_authors': array_authors,
@@ -249,7 +252,8 @@ def get_rule(request, rule_123):
                'p_result_voting_color': p_result_voting_color,
                'this_user_result_voting': this_user_result_voting,
                'rule_voted_or_not': rule_voted_or_not,
-               'quorum': quorum
+               'quorum': quorum,
+               'work_duration': work_duration.days,
                }
     return render(request, 'shabls/one_rule.html', context)
 
@@ -327,7 +331,7 @@ def get_deputy(request, deputy_name):   # Имя аргумента deputy_name 
                'tasks': tasks,
                'id_list': id_list,
                }
-    print(id_list)
+
     return render(request, 'shabls/deputy.html', context)
 
 ##################################################################################################
@@ -807,9 +811,18 @@ def delete_agree(request):
     return HttpResponse()
 
 #######################################################################################################################
-#                                                   ПРОВЕРКА РАБОТЫ САЙТА НА VPS
+#                                                   ОТЗЫВЫ И ПОЖЕЛАНИЯ
 #######################################################################################################################
 
 
-def get_empty(request):
-    return HttpResponse('привет локал')
+def add_suggestion(request):
+    if request.method == 'POST':
+        if request.POST['suggestion_author']:
+            suggestion_author = request.POST['suggestion_author']
+        else:
+            suggestion_author = 'anonym'
+        suggestion_text = request.POST['suggestion_text']
+        Suggestions(suggestion_author=suggestion_author,
+                    suggestion_text=suggestion_text).save()
+    return HttpResponseRedirect(reverse('get_index'))
+

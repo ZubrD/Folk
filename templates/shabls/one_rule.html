@@ -68,6 +68,32 @@
             <p>{{ rule.consumer }}</p>
         </div>
     </div>
+
+{#///////////////// ДАТА НАЧАЛА РАССМОТРЕНИЯ ЗАКОНА И ПОСЛЕ ГОЛОСОВАНИЯ ДЛИТЕЛЬНОСТЬ ЕГО РАССМОТРЕНИЯ ///////////////#}
+    {% if not rule.populated and not rule.rejection %}     {# После того. как проголосуют, дата начала рассмотрения убирается #}
+    <div class="row">
+        <div class="col">
+            <p>Законопроект на рассмотрении с {{ rule.initialization_date }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if rule.rejection %}
+    <div class="row">
+        <div class="col">
+            <h4 style="color: red">Законопроект отклонён</h4>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if rule.populated %}
+    <div class="row">
+        <div class="col">
+            <h4 style="color: indigo">Законопроект был на рассмотрении {{ work_duration }} дней</h4>
+        </div>
+    </div>
+    {% endif %}
+
 {#///////////////////////                ВАМ ЭТОТ ЗАКОН НУЖЕН? (ДА/НЕТ)        //////////////////////////////////////#}
     {% if user.is_authenticated %}
     <div class="row">

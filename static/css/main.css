@@ -211,7 +211,7 @@ button {
     margin-left: 10px;
 }
 
-#comment-textarea, #task-textarea {
+#comment-textarea, #task-textarea, #suggestion-textarea {
     width: 400px;
 }
 
@@ -261,6 +261,11 @@ button {
 
 #footer {
     height: 200px;
+}
+
+#suggestion-title {
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 #footer p {
